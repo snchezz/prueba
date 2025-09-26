@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Monitoring Platform</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Web Monitoring Platform</h1>
+      <p>Administra tus webs monitorizadas y revisa el histórico de capturas.</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Añadir nueva web</h2>
+        <form id="create-form">
+          <div class="field">
+            <label for="url">URL</label>
+            <input id="url" name="url" type="url" required placeholder="https://ejemplo.com" />
+          </div>
+          <div class="field">
+            <label for="recipientEmail">Correo destinatario</label>
+            <input id="recipientEmail" name="recipientEmail" type="email" required placeholder="usuario@dominio.com" />
+          </div>
+          <button type="submit">Guardar</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Webs monitorizadas</h2>
+          <button id="refresh">Actualizar</button>
+        </div>
+        <div id="websites" class="list"></div>
+      </section>
+
+      <section class="card" id="captures-card" hidden>
+        <div class="card-header">
+          <h2>Capturas recientes</h2>
+          <button id="close-captures">Cerrar</button>
+        </div>
+        <div id="captures" class="captures"></div>
+      </section>
+    </main>
+
+    <template id="website-template">
+      <article class="website">
+        <div>
+          <h3 class="website__url"></h3>
+          <p class="website__email"></p>
+        </div>
+        <div class="website__actions">
+          <button class="show-captures">Ver capturas</button>
+          <button class="edit">Editar</button>
+          <button class="delete">Eliminar</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
