@@ -1,0 +1,33 @@
+{
+  "name": "web-monitoring-platform",
+  "version": "1.0.0",
+  "description": "Website monitoring platform with scheduled screenshots and email digests.",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "check": "node scripts/check.js"
+  },
+  "keywords": [
+    "website",
+    "monitoring",
+    "screenshots",
+    "scheduler",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13",
+    "pdfkit": "^0.15.0",
+    "puppeteer": "^22.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
