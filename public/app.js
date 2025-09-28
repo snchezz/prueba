@@ -7,12 +7,17 @@ const capturesContainer = document.querySelector('#captures');
 const closeCaptures = document.querySelector('#close-captures');
 
 async function fetchJSON(url, options) {
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    ...options
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      ...options
+    });
+  } catch (networkError) {
+    throw new Error('No se pudo conectar con el servidor. ¿Está en ejecución?');
+  }
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     const message = error.message || 'Error de red';
