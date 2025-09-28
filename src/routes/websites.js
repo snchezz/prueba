@@ -1,6 +1,7 @@
 const express = require('express');
 const dayjs = require('dayjs');
 const models = require('../models');
+const captureWebsite = require('../usecases/captureWebsite');
 
 const router = express.Router();
 
@@ -50,6 +51,31 @@ router.get('/:id/captures', (req, res) => {
     captured_at_formatted: dayjs(capture.captured_at).format('YYYY-MM-DD HH:mm:ss')
   }));
   return res.json(captures);
+});
+
+router.post('/:id/capture', async (req, res) => {
+  const website = models.findWebsite(req.params.id);
+  if (!website) return res.status(404).json({ message: 'No encontrado' });
+  try {
+    const result = await captureWebsite.run(website);
+    const capture = {
+      ...result.capture,
+      captured_at_formatted: dayjs(result.capture.captured_at).format('YYYY-MM-DD HH:mm:ss')
+    };
+    return res.status(201).json({
+      message: 'Captura generada correctamente.',
+      capture,
+      notifications: {
+        screenshotEmailSent: result.screenshotEmailSent,
+        digestEmailSent: result.digest ? result.digest.sent : false,
+        digestPeriod: result.digest
+          ? { start: result.digest.periodStart, end: result.digest.periodEnd }
+          : null
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'No se pudo generar la captura.', details: error.message });
+  }
 });
 
 module.exports = router;
