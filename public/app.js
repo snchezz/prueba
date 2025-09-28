@@ -15,7 +15,9 @@ async function fetchJSON(url, options) {
   });
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || 'Error de red');
+    const message = error.message || 'Error de red';
+    const details = error.details ? `\n${error.details}` : '';
+    throw new Error(`${message}${details}`);
   }
   return response.json();
 }

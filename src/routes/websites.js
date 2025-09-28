@@ -2,6 +2,9 @@ const express = require('express');
 const dayjs = require('dayjs');
 const models = require('../models');
 const captureWebsite = require('../usecases/captureWebsite');
+const logger = require('../logger');
+
+ main
 
 const router = express.Router();
 
@@ -74,7 +77,19 @@ router.post('/:id/capture', async (req, res) => {
       }
     });
   } catch (error) {
+
+logger.error('Error en captura manual', {
+      id: website.id,
+      error: error.message,
+      details: error.cause ? error.cause.message : undefined
+    });
+    return res.status(500).json({
+      message: error.message || 'No se pudo generar la captura.',
+      details: error.cause ? error.cause.message : undefined
+    });
+
     return res.status(500).json({ message: 'No se pudo generar la captura.', details: error.message });
+
   }
 });
 

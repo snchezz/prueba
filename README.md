@@ -17,6 +17,20 @@ Aplicación web completa para registrar sitios web, capturarlos diariamente y en
 - Navegador Chromium disponible (Puppeteer descarga uno automáticamente en la instalación).
 - Credenciales SMTP válidas para el envío de correos.
 
+### Dependencias del navegador (Linux)
+
+Si el servidor es Linux sin entorno gráfico, instala las bibliotecas de Chromium antes de lanzar las capturas:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+  libatk-bridge2.0-0 libatk1.0-0 libcairo2 libcups2 libdrm2 \
+  libgbm1 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+  libxrandr2 libasound2 libnss3 libx11-xcb1
+```
+
+Puppeteer mostrará un error similar a `error while loading shared libraries` si falta alguna dependencia.
+
 ## Configuración
 
 1. Clona el repositorio y entra en la carpeta del proyecto.
