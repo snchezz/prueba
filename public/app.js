@@ -7,15 +7,22 @@ const capturesContainer = document.querySelector('#captures');
 const closeCaptures = document.querySelector('#close-captures');
 
 async function fetchJSON(url, options) {
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    ...options
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      ...options
+    });
+  } catch (networkError) {
+    throw new Error('No se pudo conectar con el servidor. ¿Está en ejecución?');
+  }
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || 'Error de red');
+    const message = error.message || 'Error de red';
+    const details = error.details ? `\n${error.details}` : '';
+    throw new Error(`${message}${details}`);
   }
   return response.json();
 }
@@ -37,6 +44,8 @@ async function loadWebsites() {
       node.querySelector('.edit').addEventListener('click', () => openEditModal(website));
       node.querySelector('.delete').addEventListener('click', () => deleteWebsite(website.id));
       node.querySelector('.show-captures').addEventListener('click', () => showCaptures(website.id));
+      const captureButton = node.querySelector('.capture-now');
+      captureButton.addEventListener('click', () => triggerCapture(website.id, captureButton));
       websitesContainer.appendChild(node);
     });
   } catch (error) {
@@ -88,6 +97,7 @@ function openEditModal(website) {
 
 async function showCaptures(id) {
   capturesCard.hidden = false;
+  capturesCard.dataset.websiteId = String(id);
   capturesContainer.innerHTML = '<p>Cargando capturas...</p>';
   try {
     const captures = await fetchJSON(`/api/websites/${id}/captures`);
@@ -117,10 +127,46 @@ async function showCaptures(id) {
   }
 }
 
+async function triggerCapture(id, button) {
+  const originalText = button ? button.textContent : '';
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Capturando...';
+  }
+  try {
+    const result = await fetchJSON(`/api/websites/${id}/capture`, { method: 'POST' });
+    const { capture, notifications } = result;
+    const lines = [result.message];
+    if (notifications) {
+      lines.push(
+        `Correo de captura: ${notifications.screenshotEmailSent ? 'enviado' : 'omitido'}`
+      );
+      if (notifications.digestPeriod) {
+        lines.push(
+          `Resumen mensual: ${notifications.digestEmailSent ? 'enviado' : 'omitido'} (${notifications.digestPeriod.start} - ${notifications.digestPeriod.end})`
+        );
+      }
+    }
+    alert(lines.join('\n'));
+    if (!capturesCard.hidden && capturesCard.dataset.websiteId === String(id)) {
+      await showCaptures(id);
+    }
+    return capture;
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText || 'Captura de prueba';
+    }
+  }
+}
+
 createForm.addEventListener('submit', createWebsite);
 refreshButton.addEventListener('click', loadWebsites);
 closeCaptures.addEventListener('click', () => {
   capturesCard.hidden = true;
+  delete capturesCard.dataset.websiteId;
 });
 
 loadWebsites();

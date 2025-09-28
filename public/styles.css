@@ -108,6 +108,10 @@ button:hover {
   background: linear-gradient(135deg, #059669, #10b981);
 }
 
+.website__actions button.capture-now {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
 .website__actions button.delete {
   background: linear-gradient(135deg, #dc2626, #ef4444);
 }
