@@ -154,6 +154,7 @@ async function triggerCapture(id, button) {
     return capture;
   } catch (error) {
     alert(error.message);
+    throw error;
   } finally {
     if (button) {
       button.disabled = false;
